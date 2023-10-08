@@ -1,6 +1,10 @@
 Генерируем публичный и приватный ssh ключи в программе puttygen.exe и сохраняем их:
+
 ![](ssh_key_gen.jpg)
 
+В программе Putty указываем сгенерированный приватный ключ для подключения к хочу с использованием ssh ключа:
+
+![](putty_config.jpg)
 
 Добавляем SSH ключ на хост:
 
@@ -10,27 +14,35 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCDNG5J6iEIC6oZd6a4zaogJxWq8sPSig6swA
 
 sudo apt update && sudo apt upgrade -y && sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && sudo apt-get update && sudo apt-get -y install postgresql-15
 
-Отключаем auto commit:
+Запускаем 2 сессии в putty и подключаемся к бд:
+
+sudo -u postgres psql
+
+В каждой сессии отключаем auto commit:
 \set AUTOCOMMIT OFF
 
-в первой сессии новую таблицу и наполнить ее данными:
+в первой сессии создаем новую таблицу и наполняем ее данными:
 create table persons(id serial, first_name text, second_name text);
 insert into persons(first_name, second_name) values('ivan', 'ivanov');
 insert into persons(first_name, second_name) values('petr', 'petrov');
 commit;
 
-посмотреть текущий уровень изоляции: 
+смотрим текущий уровень изоляции: 
 show transaction isolation level;
 
-картинка
+![](default_transaction_level.jpg)
 
 в первой сессии добавить новую запись insert into persons(first_name, second_name) values('sergey', 'sergeev');
+
 сделать select * from persons; во второй сессии
-Новая запись не видна, т.к. в первой сессии транзакция не закоммичена
+Новая запись не видна, т.к. в первой сессии транзакция не завершена
+
+завершить первую транзакцию
+commit;
 
 сделать select * from persons во второй сессии
 видите ли вы новую запись и если да то почему?
-Да, т.к. транзакция в первой сессии завершена и в режиме read commited видны изменения, которые были внескены в других сессиях.
+Да, т.к. транзакция в первой сессии завершена и в режиме read commited в рамках одной транзакции видны изменения, которые были внесены в других сессиях.
 
 начать новые но уже repeatable read транзации
 set transaction isolation level repeatable read;
@@ -44,12 +56,14 @@ insert into persons(first_name, second_name) values('sveta', 'svetova');
 
 завершить первую транзакцию
 commit;
+
 сделать select * from persons во второй сессии
 видите ли вы новую запись и если да то почему?
 Нет, т.к. в режиме repeatable read видны только те изменения, которые были сделаны до начала транзакции. При выполнении запроса select * from persons создается новая транзакция и пока она не будет завершена, изменения, внесенные в других сессиях\транзацкиях в данной транзакции видны не будут.
 
 завершить вторую транзакцию
 commit;
+
 сделать select * from persons во второй сессии
 видите ли вы новую запись и если да то почему
 Да, т.к. после завершения транзакции в данной сессии стали видны изменния, которые были сделаны во время выполнения данной транзакции. (особенность уровня изоляции транзакций repeatable read)
