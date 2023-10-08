@@ -1,3 +1,7 @@
+Генерируем публичный и приватный ssh ключи в программе puttygen.exe и сохраняем их:
+![](ssh_key_gen.jpg)
+
+
 Добавляем SSH ключ на хост:
 
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCDNG5J6iEIC6oZd6a4zaogJxWq8sPSig6swAlnQ81PeWF/wFa+ocwd2sBg2vCeV5T9sr3s0V5iyA+2RxTYXBD8vr8lpeI6K2uL60sI/jfIJ30Q1+AHufGeAGfTa/FkK3BhflgXTs6iAbVrUH9NOYVmSpWy/rXWHTL8zJK17K9Ndy+GixCqfapcaM6+HQLt+nph8Pqmp+RUwkE2Mm0PvcTwglMV2WVF45MBmyVvRy4xy52mGrDI2eQ/B9F2UQp2WYupAjaeTiAPC1PyFNLzOxX3nVERQBLXEZzHq3tJZtFUeaBCWauh0r0yYuzvB1qQd9MLsvBiKJdvqNj3SulhkeOV rsa-key-20231008" >> .ssh/authorized_keys
