@@ -81,7 +81,7 @@ mount -o defaults /dev/sdс1 /mnt/data
 ```
 sudo -u postgres pg_ctlcluster 15 main start
 ```
-Проверяем данные
+Проверяем данные<br>
 ![](6.jpg)
 
 
