@@ -63,6 +63,8 @@ sudo -u postgres pg_ctlcluster 15 main start
 ```
 получилось, т.к. изменили data_directory
 ![](5.jpg)
+
+
 **Зайдите через через psql и проверьте содержимое ранее созданной таблицы**
 ![](6.jpg)
 
