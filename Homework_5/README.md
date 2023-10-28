@@ -8,7 +8,7 @@ pgbench -i perf_test;
 
 **Запустить pgbench**
 ```
-pgbench -c8 -P 6 -T 60 -U postgres postgres
+pgbench -c8 -P 6 -T 60 -U postgres perf_test
 ```
 ![](1.jpg)
 
