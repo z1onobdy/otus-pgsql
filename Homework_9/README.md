@@ -31,8 +31,8 @@ pg_dump -d backup -t backup.first -t backup.second -Fc > /tmp/backup/backup.gz
 ```
 create database backup2;
 \c backup2;
-create scheme backup;
-pg_restore -d backup2 -n backup -t second -FC /tmp/backup/backup.gz
+create schema backup;
+pg_restore -d backup2 -n backup -t second -Fc /tmp/backup/backup.gz
 ```
 ![](2.jpg)<br>
 ![](3.jpg)
