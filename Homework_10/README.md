@@ -79,7 +79,7 @@ echo 'hot_standby = on' >> /var/lib/postgresql/15/main4/postgresql.auto.conf
 ```
 Запускаем четвертый кластер:
 ```
-pg_ctlcluster 15 main5 start
+pg_ctlcluster 15 main4 start
 ```
 
 
