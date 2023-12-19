@@ -32,7 +32,7 @@ create index index_orders_id on orders(id);
 
 ![](2.jpg)<br>
    
-**Реализовать индекс для полнотекстового поиска**
+**Реализовать индекс для полнотекстового поиска**<br>
 В таблицу добавляем колонку, которая будет содержать лексемы для колонки some_text:<br>
 ```
 alter table orders add column some_text_lexeme tsvector;
