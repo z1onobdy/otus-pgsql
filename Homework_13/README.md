@@ -8,11 +8,11 @@ wget https://edu.postgrespro.ru/demo_big.zip -O demo_big.zip && unzip demo_big.z
 psql < demo_big.sql
 ```
 
-**Секционировать будем таблицу bookings.bookings по диапазону.**<br>
+**Секционировать будем таблицу bookings.boarding_passes по диапазону номеров билетов.**<br>
 **Для этого необходимо:**<br>
 1. Получить DDL скрипт таблицы:
 ```
-pg_dump -d demo -s -t bookings.bookings
+pg_dump -d demo -s -t bookings.boarding_passes
 ```
 
 2. Создаем копию таблицы при помощи полученного DDL скрипта, но указываем тип партиционирования (по диапазону):
