@@ -1,0 +1,73 @@
+Vagrant.configure("2") do |config|
+  # Create Ansible host
+
+    config.vm.define "haproxy" do |haproxy|
+    haproxy.vm.box = "ubuntu/jammy"
+    haproxy.vm.network "private_network", ip: "192.168.33.2"
+    haproxy.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+    end
+
+    haproxy.vm.provision "shell", inline: <<-SHELL
+    sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config    
+    systemctl restart sshd.service
+    apt update
+    apt -y install net-tools
+    apt -y install haproxy
+    SHELL
+  end
+
+    config.vm.define "etcd" do |etcd|
+    etcd.vm.box = "ubuntu/jammy"
+    etcd.vm.network "private_network", ip: "192.168.33.20"
+    etcd.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+    end
+
+    etcd.vm.provision "shell", inline: <<-SHELL
+    sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config    
+    systemctl restart sshd.service
+    apt update
+    apt -y install net-tools
+    apt -y install etcd
+
+    SHELL
+  end
+
+  # Create 3 PostgreSQL VMs with a 10GB disk and private network
+  (1..3).each do |i|
+    config.vm.define "postgres#{i}" do |postgres|
+      postgres.vm.box = "ubuntu/jammy"
+      postgres.vm.network "private_network", ip: "192.168.33.#{9+i}"
+      postgres.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      
+      end
+      postgres.vm.provision "file", source: "patroni#{i}.yml", destination: "/tmp/patroni.yml"
+      postgres.vm.provision "file", source: "patroni.service", destination: "/tmp/patroni.service"
+      postgres.vm.provision "shell", inline: <<-SHELL
+      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config    
+      systemctl restart sshd.service
+      apt update
+      apt -y install net-tools
+      apt -y install postgresql-14 postgresql-server-dev-14
+      systemctl stop postgresql
+      rm -rf /var/lib/postgresql/14/main/*
+      echo "install python3-pip"
+      apt -y install python3-pip
+      echo "install python3-testresources"
+      apt -y install python3-testresources
+      pip3 install --upgrade setuptools
+      pip3 install psycopg2
+      pip3 install patroni
+      pip3 install python-etcd
+      mkdir -p /data/patroni
+      chown postgres:postgres /data/patroni
+      chmod 700 /data/patroni
+      cp /tmp/patroni.yml /etc/patroni.yml
+      cp /tmp/patroni.service /etc/systemd/system/patroni.service
+      SHELL
+      
+    end
+  end
+end
